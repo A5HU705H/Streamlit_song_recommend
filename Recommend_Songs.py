@@ -29,12 +29,8 @@ if picture is not None:
     img=Image.open(picture)
     picture=np.array(img)
     cv2.imwrite('photo.jpg',picture)
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     ret,jpeg_1=cv2.imencode('.jpg',picture)
     model=tf.keras.models.load_model('my_model.h5')
-    faces = face_cascade.detectMultiScale(jpeg_1, 1.3, 5)
-    for (x,y,w,h) in faces:
-            jpeg_1= jpeg_1[y:y+h, x:x+w]
     jpeg_1=np.array(jpeg_1)
     cv2.imwrite('photo1.jpg',jpeg_1)
     jpeg_1=cv2.resize(jpeg_1,(48,48))
@@ -46,16 +42,30 @@ if picture is not None:
         if(result[0][i]>max):
             max=result[0][i]
             maxpos=i
+    anger_embed="""
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/71Xpaq3Hbpxz6w9yDmIsaH?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>"""
+    disgust_embed="""
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3qgzMg4m5tvf16PzlPgGa9?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>"""
+    fear_embed="""
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/7rzS9iLiqjy65AsZd9qinf?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>"""
+    happy_embed="""
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXdPec7aLTmlC?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>"""
+    neutral_embed="""
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWTC99MCpbjP8?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>"""
+    sad_embed="""
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX7qK8ma5wgG1?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>"""
+    surprise_embed="""
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0X0ZZTJ6z2yxX5Uu7R7j3G?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>"""
     dict={0:'anger',1:'disgust',2:'fear',3:'happiness',4:'neutral',5:'sadness',6:'surprise'}
     prediction=dict.get(maxpos)
     st.write("Emotion detected is: ",prediction)
-    dict1={0:'https://open.spotify.com/playlist/71Xpaq3Hbpxz6w9yDmIsaH',
-           1:'https://open.spotify.com/playlist/3qgzMg4m5tvf16PzlPgGa9',
-           2:'https://open.spotify.com/playlist/7rzS9iLiqjy65AsZd9qinf',
-           3:'https://open.spotify.com/playlist/37i9dQZF1DXdPec7aLTmlC',
-           4:'https://open.spotify.com/playlist/37i9dQZF1DWTC99MCpbjP8',
-           5:'https://open.spotify.com/playlist/37i9dQZF1DX7qK8ma5wgG1',
-           6:'https://open.spotify.com/playlist/0X0ZZTJ6z2yxX5Uu7R7j3G'
+    dict1={0:anger_embed,
+           1:disgust_embed,
+           2:fear_embed,
+           3:happy_embed,
+           4:neutral_embed,
+           5:sad_embed,
+           6:surprise_embed
           }
     song_link=dict1.get(maxpos)
-    st.write(song_link)
+    st.markdown(song_link,unsafe_allow_html=True)
